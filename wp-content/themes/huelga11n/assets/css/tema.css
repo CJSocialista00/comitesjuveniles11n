@@ -1,0 +1,345 @@
+/* Huelga 11N: estilos del tema. Sale del CSS de prototipo/index.html, adaptado al marcado de los bloques.
+   Layout: cabecera superpuesta → hero a sangre con titular variable → banda de lema → intro en columna estrecha → mapa + listado de comités → banda roja de cierre.
+   La @font-face NO está aquí: ver inc/fuente.php. */
+
+:root {
+  /* Marca: rojo cartel + negro grisáceo. Diseño de un solo tema (oscuro) a propósito. Valores en theme.json. */
+  --negro: var(--wp--preset--color--negro, #1e1c1c);
+  --negro-2: var(--wp--preset--color--negro-2, #272424);
+  --gris-mapa: var(--wp--preset--color--gris-mapa, #403a39);
+  --gris-linea: var(--wp--preset--color--gris-linea, #4a4342);
+  --rojo: var(--wp--preset--color--rojo, #ff4848);
+  --rojo-hondo: var(--wp--preset--color--rojo-hondo, #8f2525);
+  --blanco: var(--wp--preset--color--blanco, #f1ebe8);
+  --gris-texto: var(--wp--preset--color--gris-texto, #aaa19e);
+
+  --f-display: var(--wp--preset--font-family--acumin), "Archivo Narrow", "Arial Narrow", sans-serif;
+  --f-texto: var(--wp--preset--font-family--acumin);
+  /* Condensado: font-stretch + eje wdth (por si el kit de Adobe no mapea font-stretch) */
+  --condensado: "wdth" 50;
+
+  --gutter: clamp(16px, 4vw, 48px);
+  --max: 1280px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--negro);
+  color: var(--blanco);
+  font-family: var(--f-texto);
+  font-stretch: 100%;
+  font-size: 18px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--rojo); outline-offset: 3px; }
+.wrap { max-width: var(--max); margin-inline: auto; padding-inline: var(--gutter); }
+
+/* ---------- Cabecera ---------- */
+/* La cabecera se superpone al hero, anclada al contenedor de la página (no a la ventana): así,
+   si algo se inserta antes (barra de admin, aviso de vista previa de WordPress.com), baja con todo. */
+.wp-site-blocks { position: relative; }
+.cabecera {
+  position: absolute; inset: 0 0 auto 0; z-index: 10;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.cabecera .wrap {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding-block: 20px;
+}
+.logo { margin: 0; line-height: 1; }
+.logo a {
+  font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado); font-weight: 900;
+  font-size: 44px; line-height: 1; color: var(--rojo); text-decoration: none; letter-spacing: -0.01em;
+}
+.nav.wp-block-navigation { gap: clamp(14px, 3vw, 32px); }
+.nav .wp-block-navigation__container { display: flex; gap: clamp(14px, 3vw, 32px); flex-wrap: wrap; align-items: baseline; }
+.nav .wp-block-navigation-item__content,
+.nav.wp-block-navigation a {
+  text-decoration: none; font-weight: 600; font-size: 16px; line-height: 1.55; text-transform: uppercase;
+  padding: 4px 0; border-bottom: 2px solid transparent;
+}
+.nav.wp-block-navigation a:hover { border-color: var(--rojo); text-decoration: none; }
+/* «Comités»: rectángulo rojo, como el botón del hero */
+.nav .nav__destacado a.wp-block-navigation-item__content,
+.nav > a.nav__destacado {
+  background: var(--rojo); color: var(--negro); font-weight: 700;
+  /* Mayúsculas centradas en el rectángulo: la línea base deja más aire abajo, así que el relleno se reparte 8/4 */
+  padding: 8px 14px 4px; border-bottom: 0;
+}
+.nav .nav__destacado a.wp-block-navigation-item__content:hover,
+.nav > a.nav__destacado:hover { background: var(--blanco); color: var(--negro); }
+
+/* ---------- Hero (bloque Portada con clase "hero") ---------- */
+.wp-block-cover.hero {
+  display: block; min-height: 0; overflow: hidden; isolation: isolate;
+  padding: clamp(110px, 14vw, 160px) 0 0;
+  color: var(--blanco);
+}
+.hero .wp-block-cover__inner-container { width: 100%; color: inherit; }
+/* Fondo: collage (herramientas/preparar-collage.py). Vertical en pantallas verticales; en apaisadas,
+   una banda horizontal de la pieza ampliada (no se repite en columnas). Si se pone un vídeo o una
+   imagen en el bloque Portada, tapan este fondo. */
+.wp-block-cover.hero {
+  background-color: var(--negro);
+  background-size: cover; background-position: center top; background-repeat: no-repeat;
+  background-image: url("../img/collage-vertical-movil.jpg");
+  background-image: image-set(url("../img/collage-vertical-movil.avif") type("image/avif"), url("../img/collage-vertical-movil.webp") type("image/webp"), url("../img/collage-vertical-movil.jpg") type("image/jpeg"));
+}
+@media (orientation: portrait) and (min-width: 601px) {
+  .wp-block-cover.hero {
+    background-image: url("../img/collage-vertical.jpg");
+    background-image: image-set(url("../img/collage-vertical.avif") type("image/avif"), url("../img/collage-vertical.webp") type("image/webp"), url("../img/collage-vertical.jpg") type("image/jpeg"));
+  }
+}
+@media (orientation: landscape) {
+  .wp-block-cover.hero {
+    background-position: center;
+    background-image: url("../img/collage-horizontal.jpg");
+    background-image: image-set(url("../img/collage-horizontal.avif") type("image/avif"), url("../img/collage-horizontal.webp") type("image/webp"), url("../img/collage-horizontal.jpg") type("image/jpeg"));
+  }
+}
+.hero__grano {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  z-index: 1; opacity: .16; mix-blend-mode: screen; image-rendering: pixelated; pointer-events: none;
+}
+.hero__etiqueta {
+  position: absolute; right: var(--gutter); bottom: 16px; z-index: 2;
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gris-texto);
+  border: 1px dashed var(--gris-linea); padding: 4px 8px; line-height: 1.55;
+}
+.titular {
+  margin: 0; font-family: var(--f-display); font-stretch: 50%;
+  color: var(--rojo); text-transform: uppercase;
+  /* GENERAL! mide 2,79em con todas las letras en Black: el tamaño garantiza que siempre cabe */
+  font-size: min(25rem, calc((min(100vw, var(--max)) - 2 * var(--gutter)) / 2.85)); line-height: .8;
+  /* Interletrado mínimo seguro: el hueco más estrecho entre glifos (R–A en Black) es 0,033em */
+  letter-spacing: -.026em;
+  transform: skewY(-5deg); transform-origin: left;
+}
+.titular__linea { display: block; white-space: nowrap; }
+.titular__linea + .titular__linea { margin-top: .04em; }
+.l {
+  display: inline-block;
+  text-align: center; /* el ancho fijo (hueco en Black) lo pone blocks/titular/fijar.js */
+  /* Estado en reposo: degradado de fino a Black. La animación la mueve JS con font-variation-settings (Safari/iOS no interpola bien font-weight) */
+  font-variation-settings: "wght" calc(200 + var(--i) / (var(--n) - 1) * 700), "wdth" 50;
+}
+.hero__pie {
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px;
+  margin-top: clamp(28px, 4vw, 56px); padding-bottom: clamp(48px, 6vw, 80px);
+}
+.hero .wrap > .hero__pie { margin-top: clamp(28px, 4vw, 56px); }
+.lema {
+  display: flex; align-items: last baseline; gap: .3em; margin: 0;
+  color: var(--rojo); font-weight: 600; font-stretch: 100%;
+  font-size: clamp(1.5rem, 3.6vw, 3rem); line-height: .95;
+}
+.lema > p { margin: 0; }
+/* «11N» en Acumin ExtraCondensed Black. Su altura de mayúscula (0,672em) iguala la del lema: desde lo alto
+   de «contra el rentismo» (ascendentes, 0,734em) hasta la línea base de «y el capital» (+0,95 de interlínea):
+   (0,95 + 0,734) / 0,672 = 2,506em. Va alineado con la línea base de la última línea. */
+.lema .lema__num {
+  font-family: var(--f-display); font-weight: 900; font-stretch: 50%; font-variation-settings: var(--condensado);
+  font-size: 2.506em; letter-spacing: -.01em; line-height: .8;
+}
+.hero .wp-block-buttons { margin: 0; gap: 0; }
+.wp-block-button.is-style-flecha .wp-block-button__link {
+  display: inline-flex; align-items: center; gap: 12px; text-decoration: none;
+}
+.wp-block-button.is-style-flecha .wp-block-button__link::after {
+  content: ""; flex: none; width: 28px; height: 12px; background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M0 6h26M21 1l5 5-5 5' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 12'%3E%3Cpath d='M0 6h26M21 1l5 5-5 5' fill='none' stroke='%23000' stroke-width='2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+
+/* ---------- Banda de lema ---------- */
+.banda {
+  position: relative; overflow: hidden; border-block: 2px solid var(--rojo);
+  background: var(--negro) url("../img/multitud.jpg") center 30% / cover no-repeat;
+}
+.banda::before { content: ""; position: absolute; inset: 0; background: rgba(30,28,28,.72); }
+.banda__pista {
+  position: relative; display: flex; width: max-content;
+  animation: desliza 70s linear infinite;
+}
+.banda__texto {
+  font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado);
+  text-transform: uppercase; white-space: nowrap;
+  /* Mayúsculas centradas entre las barras rojas: la altura de mayúscula es 0,688em y la línea base queda
+     0,269em por encima del fondo de la línea, así que el relleno se reparte desigual (mismo alto total). */
+  font-size: clamp(3rem, 8vw, 6.5rem); line-height: 1; padding-block: .253em .027em; padding-right: .3em;
+  color: var(--rojo);
+}
+.banda__texto .fino { font-weight: 250; }
+.banda__texto .grueso { font-weight: 900; }
+.banda__texto .sep { font-weight: 900; color: var(--blanco); padding-inline: .25em; }
+@keyframes desliza { to { transform: translateX(-50%); } }
+
+/* ---------- Introducción ---------- */
+.intro { padding-block: clamp(64px, 9vw, 120px); }
+.intro .wrap { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); gap: clamp(24px, 5vw, 80px); }
+/* Con foto: texto (con su etiqueta encima) a la izquierda y la foto al lado. Sin foto, el diseño original. */
+.intro .wrap:has(> .intro__foto) {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  grid-template-areas: "etiqueta foto" "texto foto";
+  grid-template-rows: auto 1fr; row-gap: 0;
+}
+.intro .wrap:has(> .intro__foto) > .etiqueta { grid-area: etiqueta; margin-bottom: 24px; }
+.intro .wrap:has(> .intro__foto) > .intro__texto { grid-area: texto; }
+.intro__foto { grid-area: foto; align-self: center; margin: 0; }
+.intro__foto img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 855; object-fit: cover; }
+.etiqueta {
+  margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--rojo);
+}
+.intro h2, .comites h2 {
+  margin: 0 0 24px; font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado); font-weight: 800;
+  text-transform: uppercase; font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: .9; text-wrap: balance;
+}
+.intro p { margin: 0 0 1em; max-width: 62ch; color: var(--blanco); }
+.intro p.entrada { font-size: clamp(1.25rem, 2vw, 1.5rem); line-height: 1.4; font-weight: 500; }
+/* Como en el prototipo, esta regla también alcanza a la etiqueta "Introducción" (sale gris, no roja) */
+.intro p:not(.entrada) { color: var(--gris-texto); }
+/* Contenido extra que se añada desde el editor */
+.intro__texto > :where(ul, ol) { margin: 0 0 1em; padding-left: 1.2em; color: var(--gris-texto); max-width: 62ch; }
+.intro__texto > :where(h3, h4) { margin: 1.5em 0 .5em; }
+.intro__texto a { color: var(--blanco); text-decoration-color: var(--rojo); text-underline-offset: .15em; }
+
+/* ---------- Mapa de comités ---------- */
+.comites { padding-block: clamp(64px, 9vw, 120px); background: var(--negro-2); border-top: 1px solid var(--gris-linea); }
+.comites__cabeza { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px 40px; margin-bottom: 32px; }
+.comites__cabeza .etiqueta { margin-bottom: 14px; }
+/* Como en el prototipo, también alcanza a la etiqueta (gris) */
+.comites__cabeza p { margin: 0; color: var(--gris-texto); max-width: 44ch; }
+.comites__cuerpo { display: grid; grid-template-columns: minmax(0, 2.4fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: start; }
+.mapa { position: relative; }
+.mapa svg { display: block; width: 100%; height: auto; overflow: hidden; touch-action: pan-x pan-y; }
+/* Al ampliar con dos dedos (blocks/mapa/zoom.js) los trazos no engordan */
+.ccaa, .pais, .punto__nucleo { vector-effect: non-scaling-stroke; }
+.mapa__reset {
+  position: absolute; right: 8px; bottom: 8px; z-index: 4;
+  background: var(--negro); color: var(--blanco); border: 2px solid var(--rojo); border-radius: 0;
+  font: inherit; font-size: 14px; font-weight: 700; padding: 6px 12px; cursor: pointer;
+}
+.mapa__reset[hidden] { display: none; }
+/* Los territorios son un fondo fijo: no se iluminan ni al pasar ni al pulsar (view.js sigue poniendo
+   .con-comite y .activa, pero no tienen estilo). Sólo reaccionan los puntos. */
+.ccaa { fill: var(--gris-mapa); stroke: var(--negro-2); stroke-width: 2.2; stroke-linejoin: round; pointer-events: none; }
+/* Contexto internacional: fondo de referencia, inerte y sin texto */
+.paises { pointer-events: none; }
+/* Mismo color que los territorios con comités: sólo cambia que no reaccionan */
+.pais { fill: var(--gris-mapa); stroke: var(--negro-2); stroke-width: 2.2; stroke-linejoin: round; }
+.punto { cursor: pointer; outline: none; }
+.punto__nucleo { fill: var(--rojo); stroke: var(--negro-2); stroke-width: 2; transition: fill .15s; }
+.punto__halo { fill: var(--rojo); opacity: 0; transform-box: fill-box; transform-origin: center; }
+.punto:hover .punto__nucleo, .punto:focus-visible .punto__nucleo, .punto.activo .punto__nucleo { fill: var(--blanco); stroke: var(--rojo); stroke-width: 3; }
+.punto.activo .punto__halo, .punto:hover .punto__halo { animation: pulso 1.6s ease-out infinite; }
+@keyframes pulso { from { transform: scale(.8); opacity: .6; } to { transform: scale(2); opacity: 0; } }
+
+.ficha {
+  position: absolute; z-index: 5; width: min(340px, calc(100vw - 32px));
+  background: var(--blanco); color: var(--negro); padding: 18px 20px 14px;
+  box-shadow: 8px 8px 0 var(--rojo);
+  transform: translate(-50%, calc(-100% - 20px));
+}
+.ficha[hidden] { display: none; }
+.ficha.abajo { transform: translate(-50%, 20px); }
+.ficha__ccaa { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #9a2a2a; }
+.ficha__nombre { margin: 0 32px 10px 0; font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado); font-weight: 800; text-transform: uppercase; font-size: 2.1rem; line-height: .9; }
+.ficha__nombre small { font-family: var(--f-texto); font-stretch: 100%; font-variation-settings: normal; font-weight: 600; font-size: 14px; text-transform: none; color: #6b6261; margin-left: 6px; }
+.ficha__lista {
+  margin: 0; padding: 10px 0 0; list-style: none; border-top: 2px solid var(--negro);
+  max-height: 260px; overflow-y: auto; overscroll-behavior: contain;
+  font-size: 15px; line-height: 1.3;
+}
+.ficha__lista li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-block: 5px; border-bottom: 1px solid #d9d0cd; }
+.ficha__lista li:last-child { border-bottom: 0; }
+.ficha__lista .com__nombre::before { content: "/"; color: #c23232; font-weight: 700; margin-right: 2px; }
+.ficha__lista .com__contacto { font-weight: 700; user-select: all; white-space: nowrap; }
+.ficha__lista .com__contacto.pendiente { font-weight: 400; font-style: italic; color: #8a807e; user-select: auto; }
+.ficha__cerrar {
+  position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; background: none; padding: 0;
+  font-size: 22px; line-height: 1; cursor: pointer; color: var(--negro);
+}
+
+.panel { display: flex; flex-direction: column; min-width: 0; }
+.buscador { position: relative; margin-bottom: 12px; }
+.buscador label { display: block; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--gris-texto); margin-bottom: 6px; }
+.buscador input {
+  width: 100%; font: inherit; font-size: 17px; color: var(--blanco); background: var(--negro);
+  border: 2px solid var(--gris-linea); border-radius: 0; padding: 10px 12px; margin: 0;
+}
+.buscador input:focus { border-color: var(--rojo); outline: none; }
+.resumen { margin: 0 0 12px; font-size: 14px; color: var(--gris-texto); font-variant-numeric: tabular-nums; }
+.listado {
+  margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--rojo);
+  max-height: 560px; overflow-y: auto; overscroll-behavior: contain;
+}
+.ciudad { border-bottom: 1px solid var(--gris-linea); }
+.ciudad summary {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; align-items: baseline;
+  padding: 12px 4px; cursor: pointer; list-style: none;
+}
+.ciudad summary::-webkit-details-marker { display: none; }
+.ciudad summary:hover .ciudad__nombre { color: var(--rojo); }
+.ciudad__nombre { font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: .02em; }
+.ciudad__n { font-size: 14px; color: var(--gris-texto); font-variant-numeric: tabular-nums; }
+.ciudad__n::after { content: " +"; color: var(--rojo); font-weight: 700; }
+.ciudad[open] .ciudad__n::after { content: " −"; }
+.ciudad ul { margin: 0; padding: 0 4px 14px; list-style: none; font-size: 16px; color: var(--blanco); }
+.ciudad li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding-block: 3px; }
+.ciudad .com__nombre { min-width: 0; }
+.ciudad .com__nombre::before { content: "/"; color: var(--rojo); font-weight: 700; margin-right: 2px; }
+.ciudad .com__contacto { font-size: 14px; color: var(--blanco); font-weight: 600; white-space: nowrap; user-select: all; }
+.ciudad .com__contacto.pendiente { color: var(--gris-texto); font-weight: 400; font-style: italic; user-select: auto; }
+/* Contacto @usuario: enlace a Instagram */
+a.com__contacto { user-select: auto; text-decoration: underline; text-decoration-color: var(--rojo); text-decoration-thickness: 2px; text-underline-offset: .2em; }
+a.com__contacto:hover { color: var(--rojo); }
+.ficha__lista a.com__contacto:hover { color: #c23232; }
+.ciudad li mark { background: var(--rojo); color: var(--negro); }
+.ciudad__ver {
+  margin-top: 8px; background: none; border: 1px solid var(--gris-linea); border-radius: 0; color: var(--gris-texto);
+  font: inherit; font-size: 13px; padding: 4px 10px; cursor: pointer;
+}
+.ciudad__ver:hover { border-color: var(--rojo); color: var(--blanco); }
+.sin-resultados { padding: 16px 4px; margin: 0; color: var(--gris-texto); }
+.ciudad li.sin-barra::before { content: none; }
+
+/* ---------- Cierre (pie) ---------- */
+.cierre { background: var(--rojo); color: var(--negro); }
+.cierre .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; padding-block: 28px; }
+.cierre .wrap > * { margin: 0; }
+.cierre p { margin: 0; font-weight: 700; font-size: clamp(1.15rem, 2.2vw, 1.6rem); line-height: 1.05; }
+/* Flecha decorativa: ocupa el resto de la franja hasta el borde derecho */
+.cierre__flecha { flex: 1 1 120px; height: 2px; background: var(--negro); position: relative; min-width: 60px; }
+.cierre__flecha::after { content: ""; position: absolute; right: 0; top: -7px; width: 14px; height: 14px; border-top: 2px solid var(--negro); border-right: 2px solid var(--negro); transform: rotate(45deg); }
+.legal { padding-block: 20px calc(20px + env(safe-area-inset-bottom, 0px)); font-size: 14px; color: var(--gris-texto); }
+.legal p { margin: 0; }
+
+/* ---------- Páginas interiores (page.html, index.html, 404.html) ---------- */
+.pagina { padding-block: clamp(110px, 14vw, 160px) clamp(64px, 9vw, 120px); }
+.pagina h1, .pagina .wp-block-post-title {
+  margin: 0 0 32px; font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado); font-weight: 800;
+  text-transform: uppercase; font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: .9; color: var(--rojo); text-wrap: balance;
+}
+.pagina .wp-block-post-title a { text-decoration: none; }
+.prosa { max-width: 62ch; }
+.prosa > * + * { margin-top: 1em; }
+.prosa a { text-decoration-color: var(--rojo); text-underline-offset: .15em; }
+.pagina .wp-block-post-template { list-style: none; margin: 0; padding: 0; display: grid; gap: 48px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 860px) {
+  .listado { max-height: 60vh; }
+  .intro .wrap, .comites__cuerpo { grid-template-columns: minmax(0, 1fr); }
+  .intro .wrap:has(> .intro__foto) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "etiqueta" "texto" "foto"; grid-template-rows: auto; }
+  .intro__foto { margin-top: 16px; }
+  .nav .wp-block-navigation-item:not(:last-child) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banda__pista, .punto__halo { animation: none; }
+  html { scroll-behavior: auto; }
+}
