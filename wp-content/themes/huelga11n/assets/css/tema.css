@@ -119,6 +119,9 @@ a { color: inherit; }
   /* Interletrado mínimo seguro: el hueco más estrecho entre glifos (R–A en Black) es 0,033em */
   letter-spacing: -.026em;
   transform: skewY(-5deg); transform-origin: left;
+  /* Capa propia: la animación repinta sólo el texto y no el collage de detrás (en escritorio, el
+     repintado continuo del fondo con escalado rápido hacía «temblar» la zona alrededor del titular). */
+  will-change: transform;
 }
 .titular__linea { display: block; white-space: nowrap; }
 .titular__linea + .titular__linea { margin-top: .04em; }
