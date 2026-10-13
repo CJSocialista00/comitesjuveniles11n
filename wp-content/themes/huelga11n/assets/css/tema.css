@@ -76,7 +76,9 @@ a { color: inherit; }
 /* ---------- Hero (bloque Portada con clase "hero") ---------- */
 .wp-block-cover.hero {
   display: block; min-height: 0; overflow: hidden; isolation: isolate;
-  padding: clamp(110px, 14vw, 160px) 0 0;
+  /* Los espacios del hero dependen también del alto de la pantalla: en pantallas bajas (portátiles,
+     móvil girado) dejan sitio al titular. 96 px de mínimo arriba: la cabecera mide 84. */
+  padding: clamp(96px, min(12vw, 13vh), 150px) 0 0;
   color: var(--blanco);
 }
 .hero .wp-block-cover__inner-container { width: 100%; color: inherit; }
@@ -123,6 +125,36 @@ a { color: inherit; }
      repintado continuo del fondo con escalado rápido hacía «temblar» la zona alrededor del titular). */
   will-change: transform;
 }
+/* Titular en imagen (modo por defecto del bloque): apilado en vertical, en una línea en apaisado. Ya viene
+   inclinado. Ocupa el ancho, salvo si así no cabría el hero entero en la pantalla: encajar.js calcula el ancho
+   al que cabe (--titular-ancho) y titular + lema + botón forman un bloque centrado. Jerarquía: el pie (lema +
+   botón) mide el 80 % del titular, que sobresale por los dos lados. El pie no baja de 560 px (si no, lema y
+   botón pasarían a dos filas y cambiaría la cuenta); en móvil vertical va a todo el ancho. */
+.titular.titular--imagen {
+  transform: none; will-change: auto; font-size: 1rem; line-height: 0;
+  /* Centrado también cuando es más ancho que el contenedor (margen negativo) */
+  width: var(--titular-ancho, auto); margin-inline: calc((100% - var(--titular-ancho, 100%)) / 2);
+}
+.titular--imagen img { display: block; width: 100%; height: auto; }
+/* Letras sueltas encima de la imagen (blocks/titular/render.php): cada una es un trozo de la hoja
+   titular-letras-*.webp. Se ve la versión de la orientación; la imagen de debajo queda invisible. */
+.titular--letras { position: relative; }
+.titular--letras picture img { visibility: hidden; }
+.titular__letras { position: absolute; inset: 0; display: none; }
+.titular__letras--apilado { display: block; }
+@media (orientation: landscape) {
+  .titular__letras--apilado { display: none; }
+  .titular__letras--linea { display: block; }
+}
+.tl { position: absolute; background-repeat: no-repeat; }
+/* Tensión: vibración nerviosa de cada letra, desfasada. 0,64 s por ciclo (algo más lenta que la prueba «lenta») */
+.titular--tension .tl { animation: tension .64s steps(2) infinite; animation-delay: calc(var(--i) * -.1s); }
+@keyframes tension {
+  0% { transform: translate(.6%, -.5%) rotate(-.6deg); }
+  50% { transform: translate(-.5%, .6%) rotate(.5deg); }
+  100% { transform: translate(.4%, .3%); }
+}
+.hero .wrap:has(> .titular--imagen) > .hero__pie { width: min(100%, max(calc(var(--titular-ancho, 100%) * .8), 560px)); margin-inline: auto; }
 .titular__linea { display: block; white-space: nowrap; }
 .titular__linea + .titular__linea { margin-top: .04em; }
 .l {
@@ -132,14 +164,14 @@ a { color: inherit; }
   font-variation-settings: "wght" calc(200 + var(--i) / (var(--n) - 1) * 700), "wdth" 50;
 }
 .hero__pie {
-  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 24px;
-  margin-top: clamp(28px, 4vw, 56px); padding-bottom: clamp(48px, 6vw, 80px);
+  display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: clamp(16px, 3vh, 24px) 24px;
+  margin-top: clamp(16px, min(4vw, 4vh), 56px); padding-bottom: clamp(24px, min(6vw, 6vh), 80px);
 }
-.hero .wrap > .hero__pie { margin-top: clamp(28px, 4vw, 56px); }
+.hero .wrap > .hero__pie { margin-top: clamp(16px, min(4vw, 4vh), 56px); }
 .lema {
   display: flex; align-items: last baseline; gap: .3em; margin: 0;
   color: var(--rojo); font-weight: 600; font-stretch: 100%;
-  font-size: clamp(1.5rem, 3.6vw, 3rem); line-height: .95;
+  font-size: clamp(1.5rem, min(3vw, 4.5vh), 2.5rem); line-height: .95;
 }
 .lema > p { margin: 0; }
 /* «11N» en Acumin ExtraCondensed Black. Su altura de mayúscula (0,672em) iguala la del lema: desde lo alto
@@ -174,7 +206,7 @@ a { color: inherit; }
   text-transform: uppercase; white-space: nowrap;
   /* Mayúsculas centradas entre las barras rojas: la altura de mayúscula es 0,688em y la línea base queda
      0,269em por encima del fondo de la línea, así que el relleno se reparte desigual (mismo alto total). */
-  font-size: clamp(3rem, 8vw, 6.5rem); line-height: 1; padding-block: .253em .027em; padding-right: .3em;
+  font-size: clamp(3rem, min(8vw, 9vh), 6.5rem); line-height: 1; padding-block: .253em .027em; padding-right: .3em;
   color: var(--rojo);
 }
 .banda__texto .fino { font-weight: 250; }
@@ -342,7 +374,17 @@ a.com__contacto:hover { color: var(--rojo); }
   .intro__foto { margin-top: 16px; }
   .nav .wp-block-navigation-item:not(:last-child) { display: none; }
 }
+/* Pantallas muy bajas (móvil girado): todo más compacto para que el hero quepa con un titular legible */
+@media (orientation: landscape) and (max-height: 500px) {
+  .cabecera .wrap { padding-block: 10px; }
+  .logo a { font-size: 34px; }
+  .wp-block-cover.hero { padding-top: 64px; }
+  .hero__pie, .hero .wrap > .hero__pie { margin-top: 10px; padding-bottom: 14px; }
+  .hero .wp-block-button__link { padding-block: 10px; }
+  .lema { font-size: 1.25rem; }
+  .banda__texto { font-size: 2.25rem; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .banda__pista, .punto__halo { animation: none; }
+  .banda__pista, .punto__halo, .titular--letras .tl { animation: none; }
   html { scroll-behavior: auto; }
 }
