@@ -173,7 +173,8 @@ a { color: inherit; }
 .lema {
   display: flex; align-items: last baseline; gap: .3em; margin: 0;
   color: var(--rojo); font-weight: 600; font-stretch: 100%;
-  font-size: clamp(1.5rem, min(3vw, 4.5vh), 2.5rem); line-height: .95;
+  /* Mínimo 24 px, salvo en móviles estrechos (6,2vw): «el capital y sus gobiernos» cabe siempre en una línea */
+  font-size: clamp(min(1.5rem, 6.2vw), min(3vw, 4.5vh), 2.5rem); line-height: .95;
 }
 .lema > p { margin: 0; }
 /* «11N» en Acumin ExtraCondensed Black. Su altura de mayúscula (0,672em) iguala la del lema: desde lo alto
