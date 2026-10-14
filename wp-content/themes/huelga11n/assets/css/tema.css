@@ -16,7 +16,8 @@
   --f-display: var(--wp--preset--font-family--acumin), "Archivo Narrow", "Arial Narrow", sans-serif;
   --f-texto: var(--wp--preset--font-family--acumin);
   /* Condensado: font-stretch + eje wdth (por si el kit de Adobe no mapea font-stretch) */
-  --condensado: "wdth" 50;
+  /* "slnt" 0: Acumin Variable Concept tiene eje de inclinación (0–12°); se fija recto por si algún navegador lo aplica */
+  --condensado: "wdth" 50, "slnt" 0;
 
   --gutter: clamp(16px, 4vw, 48px);
   --max: 1280px;
@@ -32,6 +33,7 @@ body {
   font-stretch: 100%;
   font-size: 18px;
   line-height: 1.55;
+  font-style: normal; font-variation-settings: "slnt" 0; /* texto siempre recto (ver --condensado) */
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
@@ -161,7 +163,7 @@ a { color: inherit; }
   display: inline-block;
   text-align: center; /* el ancho fijo (hueco en Black) lo pone blocks/titular/fijar.js */
   /* Estado en reposo: degradado de fino a Black. La animación la mueve JS con font-variation-settings (Safari/iOS no interpola bien font-weight) */
-  font-variation-settings: "wght" calc(200 + var(--i) / (var(--n) - 1) * 700), "wdth" 50;
+  font-variation-settings: "wght" calc(200 + var(--i) / (var(--n) - 1) * 700), "wdth" 50, "slnt" 0;
 }
 .hero__pie {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: clamp(16px, 3vh, 24px) 24px;
@@ -226,7 +228,7 @@ a { color: inherit; }
 .intro .wrap:has(> .intro__foto) > .etiqueta { grid-area: etiqueta; margin-bottom: 24px; }
 .intro .wrap:has(> .intro__foto) > .intro__texto { grid-area: texto; }
 .intro__foto { grid-area: foto; align-self: center; margin: 0; }
-.intro__foto img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 855; object-fit: cover; }
+.intro__foto img { display: block; width: 100%; height: auto; aspect-ratio: 1200 / 1054; object-fit: cover; }
 .etiqueta {
   margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--rojo);
 }
@@ -284,7 +286,7 @@ a { color: inherit; }
 .ficha.abajo { transform: translate(-50%, 20px); }
 .ficha__ccaa { margin: 0 0 4px; font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #9a2a2a; }
 .ficha__nombre { margin: 0 32px 10px 0; font-family: var(--f-display); font-stretch: 50%; font-variation-settings: var(--condensado); font-weight: 800; text-transform: uppercase; font-size: 2.1rem; line-height: .9; }
-.ficha__nombre small { font-family: var(--f-texto); font-stretch: 100%; font-variation-settings: normal; font-weight: 600; font-size: 14px; text-transform: none; color: #6b6261; margin-left: 6px; }
+.ficha__nombre small { font-family: var(--f-texto); font-stretch: 100%; font-variation-settings: "slnt" 0; font-weight: 600; font-size: 14px; text-transform: none; color: #6b6261; margin-left: 6px; }
 .ficha__lista {
   margin: 0; padding: 10px 0 0; list-style: none; border-top: 2px solid var(--negro);
   max-height: 260px; overflow-y: auto; overscroll-behavior: contain;
