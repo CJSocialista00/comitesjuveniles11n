@@ -21,20 +21,29 @@ function proyectar(lon, lat, canarias) {
   /* Fila de comité: nombre + contacto (o "pendiente").
      Un contacto «@usuario» es un enlace a su Instagram (https://www.instagram.com/usuario/). */
   const INSTAGRAM = /^@([A-Za-z0-9._]{1,30})$/;
+  function contacto(texto, q) {
+    const ig = INSTAGRAM.exec(texto);
+    const k = document.createElement(ig ? 'a' : 'span'); k.className = 'com__contacto' + (texto ? '' : ' pendiente');
+    if (ig) {
+      k.href = `https://www.instagram.com/${ig[1]}/`;
+      k.target = '_blank'; k.rel = 'noopener';
+      k.setAttribute('aria-label', `${texto} en Instagram (se abre en otra pestaña)`);
+    }
+    k.append(texto ? (q ? marcar(texto, q) : texto) : 'pendiente');
+    return k;
+  }
   function filaComite(com, q) {
     const li = document.createElement('li');
     const n = document.createElement('span'); n.className = 'com__nombre';
     n.append(q ? marcar(com.nombre, q) : com.nombre);
-    const ig = INSTAGRAM.exec(com.contacto);
-    const k = document.createElement(ig ? 'a' : 'span'); k.className = 'com__contacto' + (com.contacto ? '' : ' pendiente');
-    if (ig) {
-      k.href = `https://www.instagram.com/${ig[1]}/`;
-      k.target = '_blank'; k.rel = 'noopener';
-      k.setAttribute('aria-label', `${com.contacto} en Instagram (se abre en otra pestaña)`);
-    }
-    k.append(com.contacto ? (q ? marcar(com.contacto, q) : com.contacto) : 'pendiente');
-    li.append(n, k);
+    li.append(n, contacto(com.contacto, q));
     return li;
+  }
+  /* Contactos generales de la ciudad (correo o @usuario), junto a su nombre */
+  function contactosCiudad(c, clase, q) {
+    const p = document.createElement('span'); p.className = clase;
+    (c.contactos || []).forEach(t => p.append(contacto(t, q)));
+    return p;
   }
   const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
   const total = CIUDADES.reduce((n, c) => n + c.comites.length, 0);
@@ -62,6 +71,9 @@ function proyectar(lon, lat, canarias) {
     const n = document.createElement('small');
     n.textContent = c.comites.length === 1 ? '1 comité' : c.comites.length + ' comités';
     nombre.appendChild(n);
+    const generales = ficha.querySelector('.ficha__contactos');
+    generales.replaceChildren(...contactosCiudad(c, 'x').childNodes);
+    generales.hidden = !(c.contactos || []).length;
     const lista = ficha.querySelector('.ficha__lista');
     lista.replaceChildren(...c.comites.map(com => filaComite(com)));
     lista.scrollTop = 0;
@@ -124,7 +136,7 @@ function proyectar(lon, lat, canarias) {
     let nCiudades = 0, nComites = 0;
     listado.replaceChildren();
     [...CIUDADES].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')).forEach(c => {
-      const ciudadCoincide = !q || norm(c.nombre).includes(q) || norm(c.ccaaNombre).includes(q);
+      const ciudadCoincide = !q || norm(c.nombre).includes(q) || norm(c.ccaaNombre).includes(q) || (c.contactos || []).some(t => norm(t).includes(q));
       const items = ciudadCoincide ? c.comites : c.comites.filter(com => norm(com.nombre).includes(q) || norm(com.contacto).includes(q));
       if (!items.length) return;
       nCiudades++; nComites += items.length;
@@ -136,6 +148,7 @@ function proyectar(lon, lat, canarias) {
       const nom = document.createElement('span'); nom.className = 'ciudad__nombre'; nom.append(marcar(c.nombre, ciudadCoincide ? q : ''));
       const n = document.createElement('span'); n.className = 'ciudad__n'; n.textContent = items.length;
       s.append(nom, n);
+      if ((c.contactos || []).length) s.append(contactosCiudad(c, 'ciudad__contactos', q));
       const ul = document.createElement('ul');
       items.forEach(com => ul.appendChild(filaComite(com, ciudadCoincide ? '' : q)));
       const ver = document.createElement('button');
